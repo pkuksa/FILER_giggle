@@ -143,6 +143,7 @@ uint32_t giggle_insert(uint32_t domain,
      *
      */
 
+//    fprintf(stderr, "DBG: giggle insert: domain=%u, start=%u, end=%u\n", domain, start, end);
 #if DEBUG
     fprintf(stderr, "%u %u\n", start, end);
 #endif
@@ -160,6 +161,7 @@ uint32_t giggle_insert(uint32_t domain,
 #if DEBUG
         fprintf(stderr ,"->%u\n", end);
 #endif
+//        fprintf(stderr, "DBG: end_id==0");
         void *d = giggle_data_handler.new_non_leading(domain);
         giggle_data_handler.non_leading_SE_add_scalar(domain, d, &id);
 
@@ -197,6 +199,7 @@ uint32_t giggle_insert(uint32_t domain,
 #if DEBUG
         fprintf(stderr ,"->%u\n", start);
 #endif
+//        fprintf(stderr, "DBG: start_id==0");
         void *d = giggle_data_handler.new_non_leading(domain);
         giggle_data_handler.non_leading_SA_add_scalar(domain, d, &id);
         uint32_t v_id;
@@ -235,7 +238,7 @@ uint32_t giggle_insert(uint32_t domain,
     //if (start_leaf_id != end_leaf_id) 
     start_leaf_id = bpt_find_leaf(domain, *root_id, start);
     end_leaf_id = bpt_find_leaf(domain, *root_id, end + 1);
-
+//    fprintf(stderr, "DBG: :::\ts_id:%u e_id:%u\n", start_leaf_id, end_leaf_id);
 #if DEBUG
     fprintf(stderr, ":::\ts_id:%u e_id:%u\n", start_leaf_id, end_leaf_id);
 #endif
@@ -822,6 +825,7 @@ uint32_t giggle_get_chrm_id(struct giggle_index *gi, char *chrm)
     struct str_uint_pair *r = chrm_index_get(gi->chrm_idx, chrm);
 
     if (r == NULL) {
+//        fprintf(stderr,"DBG: adding new chromosome name: %s\n",chrm);
         uint32_t id = chrm_index_add(gi->chrm_idx, chrm);
         uint32_t size = gi->chrm_idx->index->num;
 
@@ -837,6 +841,7 @@ uint32_t giggle_get_chrm_id(struct giggle_index *gi, char *chrm)
                 gi->root_ids[i] = 0;
         }
 
+//        fprintf(stderr,"DBG: addedd chromosome=%s, id=%u\n",chrm, id);
         return id;
     }
 
@@ -874,7 +879,8 @@ uint32_t giggle_index_file(struct giggle_index *gi,
     if (i == NULL)
         errx(1, "Could not open %s.\n", file_name);
 
-    int chrm_len = 10;
+    //int chrm_len = 10;
+    int chrm_len = 50; //@@@pk
     char *chrm = (char *)malloc(chrm_len*sizeof(char));
     if (chrm == NULL)
         err(1, "realloc error in giggle_index_file()");
@@ -898,16 +904,16 @@ uint32_t giggle_index_file(struct giggle_index *gi,
                                            &end,
                                            &offset,
                                            &line) >= 0) {
-        //fprintf(stderr, "%s %u %u\n", chrm, start, end); 
         intrv_id = offset_index_add(gi->offset_idx,
                                     offset,
                                     &line,
                                     file_id);
 
         uint32_t chrm_id = giggle_get_chrm_id(gi, chrm);
+//        fprintf(stderr, "DBG: %s, %u, %u, %u, %s %u %u\n", file_name, chrm_len, chrm_id, intrv_id, chrm, start, end); 
         uint32_t r = giggle_insert(chrm_id,
                                    &(gi->root_ids[chrm_id]),
-                                   start,
+                                   start+1, //@@@pk
                                    end,
                                    intrv_id);
         fd->mean_interval_size += end-start;
@@ -2742,7 +2748,7 @@ void giggle_bulk_insert_build_leaf_levels(struct giggle_index *gi,
                                                   pqd_start->file_id);
             fd->mean_interval_size += end-start;
             fd->num_intervals += 1;
-
+            start += 1; // @@@pk
             pqd_starts[pqd_start->file_id].interval_id = interval_id;
             pri_start.pos = start;
             strcpy(pri_start.chrm, chrm);
@@ -2755,7 +2761,8 @@ void giggle_bulk_insert_build_leaf_levels(struct giggle_index *gi,
 
             pqd_end->file_id = pqd_start->file_id;
             pqd_end->interval_id = interval_id;
-            pri_end.pos = end + 1;
+            //@@pk pri_end.pos = end + 1;
+            pri_end.pos = end+1; // @@@pk 
             strcpy(pri_end.chrm, chrm);
             priq_push(*pq_end, pqd_end, pri_end);
         }
@@ -2905,6 +2912,7 @@ void giggle_bulk_insert_prime_pqs(struct giggle_index *gi,
                                                        &offset,
                                                        &line);
 
+
         struct file_data *fd = file_index_get(gi->file_idx, i);
         fd->mean_interval_size += end-start;
         fd->num_intervals += 1;
@@ -2915,6 +2923,7 @@ void giggle_bulk_insert_prime_pqs(struct giggle_index *gi,
         //fprintf(stderr, "%s %u %u %u\n", chrm, start, end, interval_id);
 
         //Update the pq data for the start, use the array to reduce mallocs
+				start += 1; // @@@pk: pq use 1-based start
         pqd_starts[i].file_id = i;
         pqd_starts[i].interval_id = interval_id;
         pri_start.pos = start;
@@ -2928,7 +2937,8 @@ void giggle_bulk_insert_prime_pqs(struct giggle_index *gi,
         
         pqd_end->file_id = i;
         pqd_end->interval_id = interval_id;
-        pri_end.pos = end + 1; // use end + 1
+        // @@@pk pri_end.pos = end + 1; // use end + 1
+        pri_end.pos = end+1; // @@@pk
         strcpy(pri_end.chrm, chrm);
         priq_push(*pq_end, pqd_end, pri_end);
     }

@@ -32,7 +32,8 @@ int index_main(int argc, char **argv, char *full_cmd)
 {
     if (argc < 2) return index_help(EX_OK);
 
-    uint32_t num_chrms = 100;
+    //uint32_t num_chrms = 100;
+    uint32_t num_chrms = 1000; // @@@pk handle hg38 with >100 'chromosomes'
     int c;
     char *input_dir_name = NULL,
          *output_dir_name = NULL;
@@ -101,7 +102,10 @@ int index_main(int argc, char **argv, char *full_cmd)
         if (gi == NULL)
             return EX_DATAERR;
 
-        uint32_t r = giggle_index_directory(gi, input_dir_name, 0);
+//        fprintf(stderr, "DBG: gi index initialized\n");
+        //uint32_t r = giggle_index_directory(gi, input_dir_name, 0);
+        // verbose output
+        uint32_t r = giggle_index_directory(gi, input_dir_name, 1);
         
         fprintf(stderr, "Indexed %u intervals.\n", r);
 

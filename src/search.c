@@ -33,7 +33,10 @@ int print_giggle_query_result(struct giggle_query_result *gqr,
                               uint32_t v_is_set,
                               uint32_t c_is_set,
                               uint32_t s_is_set,
-                              uint32_t o_is_set);
+                              uint32_t o_is_set,
+															uint32_t bed_out_is_set, // @@@pk: set to 1 to output in BED format
+															char *query_string // @@@pk: input query line
+															);
 
 //{{{ int search_help(int exit_code)
 int search_help(int exit_code)
@@ -45,6 +48,7 @@ int search_help(int exit_code)
 "             -i giggle index directory\n"
 "             -r <regions (CSV)>\n"
 "             -q <query file>\n"
+"             -b print results in BED format (only for per query -o, -o -v outputs)\n"
 "             -o give reuslts per record in the query file (omits empty results)\n"
 "             -c give counts by indexed file\n"
 "             -s give significance by indexed file (requires query file)\n"
@@ -70,7 +74,10 @@ int print_giggle_query_result(struct giggle_query_result *gqr,
                               uint32_t v_is_set,
                               uint32_t c_is_set,
                               uint32_t s_is_set,
-                              uint32_t o_is_set)
+                              uint32_t o_is_set,
+															uint32_t bed_out_is_set, // @@@pk: set to 1 to output in BED format
+															char *query_string // @@@pk: input query line 
+															)
 {
     if (gqr == NULL)
         return EX_OK;
@@ -101,16 +108,41 @@ int print_giggle_query_result(struct giggle_query_result *gqr,
                 char *result;
                 struct giggle_query_iter *gqi =
                     giggle_get_query_itr(gqr, i);
-                while (giggle_query_next(gqi, &result) == 0)
-                    printf("%s\t%s\n", result, fd->file_name);
+								if ( bed_out_is_set == 1 )
+								{
+                  while (giggle_query_next(gqi, &result) == 0)
+                      printf("%s\t%s\t%s\n", query_string, result, fd->file_name);
+                }
+								else
+								{	
+                  while (giggle_query_next(gqi, &result) == 0)
+                      printf("%s\t%s\n", result, fd->file_name);
+								}
+
                 giggle_iter_destroy(&gqi);
             } else if (c_is_set == 1) {
-                printf("#%s\t"
+						    if ( bed_out_is_set == 1 )
+								{
+									uint32_t num_overlaps=giggle_get_query_len(gqr, i);
+									if (num_overlaps>0) // only print 'overlapping' tracks
+                    printf("%s\t"
+											   "%s\t"
+                         "%u\t"
+                         "%u\n",
+											   query_string,
+                         fd->file_name,
+                         fd->num_intervals,
+                         num_overlaps);
+								}
+								else
+								{
+                  printf("#%s\t"
                        "size:%u\t"
                        "overlaps:%u\n",
                        fd->file_name,
                        fd->num_intervals,
                        giggle_get_query_len(gqr, i));
+								}
             } else if (s_is_set == 1) {
                 uint32_t file_counts = giggle_get_query_len(gqr, i);
                 long long n11 = (long long)(file_counts);
@@ -224,13 +256,15 @@ int search_main(int argc, char **argv, char *full_cmd)
         s_is_set = 0,
         v_is_set = 0,
         f_is_set = 0,
-        o_is_set = 0;
+        o_is_set = 0,
+		    bed_out_is_set = 0;
 
     double genome_size =  3095677412.0;
 
     //{{{ cmd line param parsing
     //{{{ while((c = getopt (argc, argv, "i:r:q:cvf:h")) != -1) {
-    while((c = getopt (argc, argv, "i:r:q:csvof:g:lh")) != -1) {
+    //while((c = getopt (argc, argv, "i:r:q:csvof:g:lh")) != -1) {
+    while((c = getopt (argc, argv, "i:r:q:csvof:g:lbh")) != -1) { // %%%pk: adding b (BED format) option 
         switch (c) {
             case 'i':
                 i_is_set = 1;
@@ -247,6 +281,9 @@ int search_main(int argc, char **argv, char *full_cmd)
             case 'c':
                 c_is_set = 1;
                 break;
+						case 'b': // @@@pk: adding BED format option
+								bed_out_is_set = 1;
+								break;
             case 's':
                 s_is_set = 1;
                 break;
@@ -410,7 +447,7 @@ int search_main(int argc, char **argv, char *full_cmd)
                 char *region;
                 ret = asprintf(&region, "%s", regions + last);
                 if (parse_region(region, &chrm, &start, &end) == 0) {
-                    gqr = giggle_query(gi, chrm, start, end, gqr);
+                    gqr = giggle_query(gi, chrm, start, end, gqr); //@@@pk assuming region is provided as 1 based
                     free(region);
                 } else {
                     errx(EX_USAGE,
@@ -441,14 +478,23 @@ int search_main(int argc, char **argv, char *full_cmd)
                                                   &end,
                                                   &offset,
                                                   &line) >= 0 ) {
-            gqr = giggle_query(gi, chrm, start, end, gqr);
+            //gqr = giggle_query(gi, chrm, start, end, gqr);
+            //gqr = giggle_query(gi, chrm, start+1, end, gqr); //@@@pk use 1-based start for querying
+						//if (end>1) end -= 1; // @@@pk
+						start+=1; // @@@pk
+            gqr = giggle_query(gi, chrm, start, end, gqr); //@@@pk use 1-based start for querying
             if ( (o_is_set == 1) && (gqr->num_hits > 0) ) {
                 char *str;
                 input_file_get_curr_line_bgzf(q_f, &str);
-                printf("##%s",str);
-                // Ugh
-                if (q_f->type == BED)
-                    printf("\n");
+								if ( bed_out_is_set != 1 )
+								{
+									 // giggle type output
+                   printf("##%s",str); // print query line
+                   // Ugh
+                   if (q_f->type == BED)
+                      printf("\n");
+					     	}
+                
                 int r = print_giggle_query_result(gqr,
                                                   gi,
                                                   regexs,
@@ -461,7 +507,10 @@ int search_main(int argc, char **argv, char *full_cmd)
                                                   v_is_set,
                                                   c_is_set,
                                                   s_is_set,
-                                                  o_is_set);
+                                                  o_is_set,
+																									bed_out_is_set,
+																									str // @@@pk query string
+																									);
                 giggle_query_result_destroy(&gqr);
             }
             num_intervals += 1;
@@ -488,7 +537,11 @@ int search_main(int argc, char **argv, char *full_cmd)
                                       v_is_set,
                                       c_is_set,
                                       s_is_set,
-                                      o_is_set);
+                                      o_is_set,
+																			bed_out_is_set,
+																			NULL // @@@ pk pass empty string
+																					// FIXME: this IS USED to print out REGION-based results ('-r' option). if we want to print region-based results in BED format, will need to change logic for region-based search to search AND print out for each region in the -r list (instead of search/accumulate then print once logic that is currently in place).  no query string is needed in this case (this is only used when no per query results are requested (no '-o')only summary counts will b printed 
+																			);
 
     giggle_query_result_destroy(&gqr);
     giggle_index_destroy(&gi);

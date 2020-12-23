@@ -8,7 +8,7 @@ all: htslib
 
 htslib:
 	$(shell cd lib/htslib && autoreconf)
-	cd lib/htslib; ./configure --disable-bz2 --disable-lzma --enable-libcurl
+	cd lib/htslib; ./configure --disable-bz2 --disable-lzma --disable-libcurl
 	$(MAKE) -C lib/htslib
 
 server:

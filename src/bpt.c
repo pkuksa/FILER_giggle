@@ -433,6 +433,7 @@ uint32_t bpt_insert(uint32_t domain,
         *leaf_id = BPT_ID(root);
         *pos = 0;
 
+//        fprintf(stderr, "DBG: bpt_insert: added new node (root_id==0): %u\n", *leaf_id);
         return BPT_ID(root);
     } else {
         *leaf_id = bpt_find_leaf(domain, root_id, key);
@@ -468,13 +469,17 @@ uint32_t bpt_insert_new_value(uint32_t domain,
 #if DEBUG
     fprintf(stderr, "bpt_insert_new_value\n");
 #endif
+//    fprintf(stderr, "DBG: bpt_insert_new_value: %u, %u, %u\n", domain, root_id, key);
 
     *value_id = cache.seen(domain) + 1;
+//    fprintf(stderr, "DBG: bpt_insert_new_value, cache.seen: value_id=%u, leaf_id=%u\n", *value_id, *leaf_id);
+
     cache.add(domain,
               *value_id - 1,
               value,
               sizeof(void *),
               handler);
+//    fprintf(stderr, "DBG: bpt_insert_new_value, cache.add value_id-1=%u\n", *value_id-1);
     return bpt_insert(domain,
                       root_id,
                       key,

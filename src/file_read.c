@@ -78,6 +78,24 @@ struct input_file *input_file_init(char *file_name)
 
         i->last_offset = 0;
 
+            // Sep 2019: move past the BED header
+            while (bgzf_getline(i->bed_fp, '\n', i->kstr) >= 0) {
+                if (i->kstr->s[0] == '#')
+				{
+					fprintf(stderr, "Skipping header\n");
+                    i->last_offset = bgzf_tell(i->bed_fp);
+				}
+                else
+                    break;
+            }
+
+            if (bgzf_seek(i->bed_fp, i->last_offset, SEEK_SET) != 0) {
+                fprintf(stderr, "Error moving past header '%s'", i->file_name);
+                return NULL;
+            }
+
+
+
         i->input_file_get_next_interval = 
             input_file_get_next_interval_bed;
         i->input_file_get_next_line = 
@@ -135,7 +153,10 @@ struct input_file *input_file_init(char *file_name)
             // move past the header
             while (bgzf_getline(i->bed_fp, '\n', i->kstr) >= 0) {
                 if (i->kstr->s[0] == '#')
+				{
+					//fprintf(stderr, "Skipping header");
                     i->last_offset = bgzf_tell(i->bed_fp);
+				}
                 else
                     break;
             }
