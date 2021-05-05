@@ -12,6 +12,25 @@ Verify `FILER_giggle/bin/giggle` can be executed successfully.
 
 Current FILER_giggle version is 0.6.3fsb (as of April 2021).
 
+```
+FILER_giggle/bin/giggle search
+
+giggle, v0.6.3fsb
+usage:   giggle search -i <index directory> [options]
+         options:
+             -i giggle index directory
+             -r <regions (CSV)>
+             -q <query file>
+             -b print results in BED format (only for per query -o, -o -v outputs)
+             -o give reuslts per record in the query file (omits empty results)
+             -c give counts by indexed file
+             -s give significance by indexed file (requires query file)
+             -v give full record results
+             -f print results for files that match a pattern (regex CSV)
+             -g genome size for significance testing (default 3095677412)
+             -l list the files in the index
+
+```
 
 
 [![Build Status](https://travis-ci.org/ryanlayer/giggle.svg?branch=master)](https://travis-ci.org/ryanlayer/giggle)
