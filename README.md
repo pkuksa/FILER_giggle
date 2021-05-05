@@ -1,6 +1,18 @@
 NOTE: this repository contains an updated/customized version of Giggle (https://github.com/ryanlayer/giggle) as used by [FILER](https://lisanwanglab.org/FILER) project. This updated version focuses on BED file handling, in particular the indexing and searching of the interval in BED-based notation (0-based, half-open intervals).
 Additionally, minor updates include BED header handling and output of overlaps in BED format.
 
+To install:
+```
+git clone https://github.com/pkuksa/FILER_giggle.git
+cd FILER_giggle
+make
+```
+
+Verify `FILER_giggle/bin/giggle` can be executed successfully.
+Current FILER_giggle version is 0.6.3fsb (as of April 2021).
+
+
+
 [![Build Status](https://travis-ci.org/ryanlayer/giggle.svg?branch=master)](https://travis-ci.org/ryanlayer/giggle)
 
 <img src="https://raw.githubusercontent.com/ryanlayer/giggle/master/img/logo.png" width="300"/>
