@@ -7,7 +7,8 @@ LIBMHD_LIBS=$(HOME)/usr/local/lib
 CFLAGS=-O2 -D_FILE_OFFSET_BITS=64 -Werror -Wuninitialized
 #CFLAGS=-g -D_FILE_OFFSET_BITS=64 -Werror -Wuninitialized
 CFLAGS+=-DBLOCK_STORE 
-INCLUDES=-I$(HTS_ROOT) -L/project/wang/pkuksa/bin/openssl-1.0.2p/openssl/lib -L/project/wang/pkuksa/bin/curl-7.71.1/curl/lib
+#INCLUDES=-I$(HTS_ROOT) -L/project/wang/pkuksa/bin/openssl-1.0.2p/openssl/lib -L/project/wang/pkuksa/bin/curl-7.71.1/curl/lib
+INCLUDES=-I$(HTS_ROOT) -L/usr/local/opt/openssl/lib -L/opt/local/lib
 LIBS=-ldl -lz -lm -pthread -lcurl
 LIBS+=-lcrypto
 CC=gcc
