@@ -2,6 +2,7 @@ NOTE: this repository contains `FILER_giggle`, an updated/customized version of 
 Additionally, minor updates include BED header handling and output of overlaps in BED format.
 
 To install:
+
 1. 
 ```
 git clone https://github.com/pkuksa/FILER_giggle.git
