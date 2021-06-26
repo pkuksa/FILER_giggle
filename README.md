@@ -2,12 +2,15 @@ NOTE: this repository contains `FILER_giggle`, an updated/customized version of 
 Additionally, minor updates include BED header handling and output of overlaps in BED format.
 
 To install:
+1. 
 ```
 git clone https://github.com/pkuksa/FILER_giggle.git
 cd FILER_giggle
 make
 ```
+Giggle binary will be available under `FILER_giggle/bin/giggle`
 
+2. 
 Verify `FILER_giggle/bin/giggle` can be executed successfully.
 
 Current FILER_giggle version is 0.6.3fsb (as of April 2021).
