@@ -12,6 +12,7 @@ Giggle binary will be available under `FILER_giggle/bin/giggle`
 
 NOTE: On MacOS, if make fails may need to run
 ```
+make clean
 make -f Makefile.macos
 ```
 instead. Note that specific versions of autoconf (e.g., 2.69) may be required for successuful installation.
