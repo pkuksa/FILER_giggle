@@ -41,6 +41,7 @@ usage:   giggle search -i <index directory> [options]
 
 ```
 
+**Contact**: [filer@lisanwanglab.org](mailto:filer@lisanwanglab.org)
 
 [![Build Status](https://travis-ci.org/ryanlayer/giggle.svg?branch=master)](https://travis-ci.org/ryanlayer/giggle)
 
