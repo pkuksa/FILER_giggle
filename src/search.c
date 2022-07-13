@@ -111,7 +111,7 @@ int print_giggle_query_result(struct giggle_query_result *gqr,
 								if ( bed_out_is_set == 1 )
 								{
                   while (giggle_query_next(gqi, &result) == 0)
-                      printf("%s\t%s\t%s\n", query_string, result, fd->file_name);
+                      printf("%s\t%s\t%s\n", query_string, result, fd->file_name); // print in BED overlap format: query string + hit string + file name
                 }
 								else
 								{	

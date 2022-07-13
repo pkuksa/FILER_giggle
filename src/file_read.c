@@ -283,7 +283,8 @@ int input_file_get_next_interval_vcf(struct input_file *i,
             *end = i->line->pos + i->line->rlen;
     }
 
-    *end = *end + 1;
+    // *end = *end + 1; // @@@pk: commenting out original line
+    *end = *end + 0; // @@@pk 
 
     const char *_chrm = bcf_hdr_id2name(i->hdr, i->line->rid);
 
@@ -299,7 +300,11 @@ int input_file_get_next_interval_vcf(struct input_file *i,
     else
         memcpy(*chrm, _chrm, strlen(_chrm) + 1);
 
-    *start = i->line->pos + 1;
+    //*start = i->line->pos + 1; //@@@pk: commenting out original line
+		// @@@pk: NOTE: i->line->pos is 0-based
+    *start = i->line->pos; //@@@pk 0-based start
+		*end = i->line->pos + 1; //@@@pk FIXME FIXME VCFFIX this assumes SNPs only!!! 1-based end
+    //fprintf(stderr, "***%s i_line_pos=%d start=%d end=%d\n", i->kstr->s, i->line->pos, *start, *end);
 
     return ret;
 }

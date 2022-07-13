@@ -874,7 +874,7 @@ void giggle_index_destroy(struct giggle_index **gi)
 uint32_t giggle_index_file(struct giggle_index *gi,
                            char *file_name)
 {
-    //fprintf(stderr, "%s\n", file_name);
+    fprintf(stderr, "%s\n", file_name);
     struct input_file *i = input_file_init(file_name);
     if (i == NULL)
         errx(1, "Could not open %s.\n", file_name);
@@ -911,11 +911,18 @@ uint32_t giggle_index_file(struct giggle_index *gi,
 
         uint32_t chrm_id = giggle_get_chrm_id(gi, chrm);
 //        fprintf(stderr, "DBG: %s, %u, %u, %u, %s %u %u\n", file_name, chrm_len, chrm_id, intrv_id, chrm, start, end); 
+        int correction=1; //@@@pk
+				//fprintf(stdout,"itype=%d", i->type); // input file type
+				if (i->type == BED) correction=1;
+        //fprintf(stdout,"correction=%d", correction); 
         uint32_t r = giggle_insert(chrm_id,
                                    &(gi->root_ids[chrm_id]),
-                                   start+1, //@@@pk
+                                   start+correction, //@@@pk correction for both VCF and BED is set to 1:
+																	                   // vcf = was 1-based; changed returned value to be 0-based as in BED case
+																										 // bed = 0-based
                                    end,
                                    intrv_id);
+				//fprintf(stderr, "giggle_index_file insert: start=%d, end=%d, line=%s\n", start+correction, end, line.s);
         fd->mean_interval_size += end-start;
         fd->num_intervals += 1;
         j += 1;
@@ -2748,7 +2755,12 @@ void giggle_bulk_insert_build_leaf_levels(struct giggle_index *gi,
                                                   pqd_start->file_id);
             fd->mean_interval_size += end-start;
             fd->num_intervals += 1;
-            start += 1; // @@@pk
+						unsigned int ftype=i_files[pqd_start->file_id]->type; // @@@pk file type
+						int correction=1;
+						if (ftype==BED) correction=1;
+						//fprintf(stderr,"correction=%d", correction);
+            start += correction; // @@@pk bed = 0-based (correction = 1); vcf=is now changed to be 0-based as well (correction is also = 1)
+						//fprintf(stderr,"giggle_bulk_insert_build_leaf_levels start=%d; end=%d\n", start, end);
             pqd_starts[pqd_start->file_id].interval_id = interval_id;
             pri_start.pos = start;
             strcpy(pri_start.chrm, chrm);
@@ -2762,7 +2774,7 @@ void giggle_bulk_insert_build_leaf_levels(struct giggle_index *gi,
             pqd_end->file_id = pqd_start->file_id;
             pqd_end->interval_id = interval_id;
             //@@pk pri_end.pos = end + 1;
-            pri_end.pos = end+1; // @@@pk 
+            pri_end.pos = end + 1; // @@@pk priority queue end position
             strcpy(pri_end.chrm, chrm);
             priq_push(*pq_end, pqd_end, pri_end);
         }
@@ -2923,13 +2935,16 @@ void giggle_bulk_insert_prime_pqs(struct giggle_index *gi,
         //fprintf(stderr, "%s %u %u %u\n", chrm, start, end, interval_id);
 
         //Update the pq data for the start, use the array to reduce mallocs
-				start += 1; // @@@pk: pq use 1-based start
+        unsigned int ftype=i_files[i]->type; //@@pk
+				int correction=1;
+				if (ftype==BED) correction=1;
+				start += correction; // @@@pk: pq uses 1-based start (correction is =1 for both VCF and BED)
         pqd_starts[i].file_id = i;
         pqd_starts[i].interval_id = interval_id;
         pri_start.pos = start;
         strcpy(pri_start.chrm, chrm);
         priq_push(*pq_start, &(pqd_starts[i]), pri_start);
-
+        //fprintf(stderr,"giggle_bulk_insert_prime_pqs: file_i=%d, file_name=%s, start=%d, end=%d\n", i, i_files[i]->file_name, start, end);
         //Update the pq data for the end
         pqd_end = (struct pq_data *) malloc(sizeof(struct pq_data));
         if (pqd_end == NULL)
@@ -2938,7 +2953,7 @@ void giggle_bulk_insert_prime_pqs(struct giggle_index *gi,
         pqd_end->file_id = i;
         pqd_end->interval_id = interval_id;
         // @@@pk pri_end.pos = end + 1; // use end + 1
-        pri_end.pos = end+1; // @@@pk
+        pri_end.pos = end + 1; // @@@pk
         strcpy(pri_end.chrm, chrm);
         priq_push(*pq_end, pqd_end, pri_end);
     }
