@@ -19,12 +19,14 @@ instead. Note that specific versions of autoconf (e.g., 2.69) may be required fo
 
 Verify `FILER_giggle/bin/giggle` can be executed successfully.
 
-Current FILER_giggle version is 0.6.3fsb (as of April 2021).
+Original FILER_giggle version used in FILER publication is 0.6.3fsb (as of April 2021).
+
+Current FILER_giggle version is 0.6.3fsbv (as of July 2022).
 
 ```
 FILER_giggle/bin/giggle search
 
-giggle, v0.6.3fsb
+giggle, v0.6.3fsbv
 usage:   giggle search -i <index directory> [options]
          options:
              -i giggle index directory
