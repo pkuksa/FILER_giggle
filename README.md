@@ -3,6 +3,12 @@ Additionally, minor updates include BED header handling and output of overlaps i
 
 To install:
  
+Install the giggle dependencies with: 
+```
+sudo apt install gcc make autoconf zlib1g-dev libbz2-dev libcurl4-openssl-dev libssl-dev ruby
+```
+
+Clone repository and compile:
 ```
 git clone https://github.com/pkuksa/FILER_giggle.git
 cd FILER_giggle
