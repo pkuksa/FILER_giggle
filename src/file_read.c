@@ -82,7 +82,7 @@ struct input_file *input_file_init(char *file_name)
             while (bgzf_getline(i->bed_fp, '\n', i->kstr) >= 0) {
                 if (i->kstr->s[0] == '#')
 				{
-					fprintf(stderr, "Skipping header\n");
+					// fprintf(stderr, "Skipping header\n");
                     i->last_offset = bgzf_tell(i->bed_fp);
 				}
                 else
