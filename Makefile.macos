@@ -4,7 +4,7 @@ OBJ=obj
 all: htslib
 	@mkdir -p $(OBJ)
 	@mkdir -p $(BIN)
-	cd src; $(MAKE)
+	cd src; $(MAKE) -f Makefile.macos
 
 htslib:
 	$(shell cd lib/htslib && autoreconf --install && autoreconf) # for Mac OS may need to use specific autoconf version, e.g., 2.69
