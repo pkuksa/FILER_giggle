@@ -49,4 +49,13 @@ usage:   giggle search -i <index directory> [options]
 
 ```
 
+Installing on macOS with Homebrew:
+```
+brew install pkuksa/tap/filer-giggle
+```
+or:
+```
+brew tap pkuksa/tap
+brew install filer-giggle
+```
 **Contact**: [filer@lisanwanglab.org](mailto:filer@lisanwanglab.org)
