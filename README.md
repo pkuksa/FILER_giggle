@@ -46,7 +46,9 @@ giggle
 ```
 2. Follow any additional shell setup commands printed by the Homebrew installer.
 3. Install FILER giggle:
-```brew install pkuksa/tap/filer-giggle```
+```
+brew install pkuksa/tap/filer-giggle
+```
 
 The installed executable is:
 ```
