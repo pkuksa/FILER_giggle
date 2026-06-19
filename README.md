@@ -48,12 +48,18 @@ giggle
 3. Install FILER giggle:
 ```brew install pkuksa/tap/filer-giggle```
 
+The installed executable is:
+```
+giggle
+```
+
 ### Windows / WSL
 
 Native Windows is not supported directly. On Windows, use WSL 2 with a Linux
 distribution such as Ubuntu 24.04.
 
 Inside WSL 2:
+
 1.
 ```
 sudo apt update
@@ -62,10 +68,13 @@ sudo apt install build-essential
 2. Install Homebrew using the Linux Homebrew instructions above
 
 3. Install FILER giggle:
+   
 ```
 brew install pkuksa/tap/filer-giggle
 ```
+
 WSL 1 is *not* recommended.
+
 
 ### Building from source (outside of Homebrew)
  
