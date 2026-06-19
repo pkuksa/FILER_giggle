@@ -57,11 +57,11 @@ WSL 1 is *not* recommended.
 ### Building from source (outside of Homebrew)
  
 #### Install the giggle dependencies: 
-##### On Ubuntu:
+##### On Ubuntu / Debian:
 ```
 sudo apt install gcc make autoconf zlib1g-dev libbz2-dev libcurl4-openssl-dev libssl-dev ruby
 ```
-##### On CentOS:
+##### On CentOS Stream / RHEL / Fedora:
 ```
 sudo dnf groupinstall "Development Tools"
 sudo dnf install autoconf zlib-devel bzip2-devel libcurl-devel openssl-devel ruby
