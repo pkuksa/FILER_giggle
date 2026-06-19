@@ -34,22 +34,35 @@ or:
 brew tap pkuksa/tap
 brew install filer-giggle
 ```
+The installed executable is:
+```
+giggle
+```
+
 ### Installing on Linux with Homebrew:
 1. install Homebrew if it's not installed yet:
 ```
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
-2. Check for additional commands/next steps to run to finish Homebrew installation
-3. ```brew install pkuksa/tap/filer-giggle```
+2. Follow any additional shell setup commands printed by the Homebrew installer.
+3. Install FILER giggle:
+```brew install pkuksa/tap/filer-giggle```
 
 ### Windows / WSL
 
 Native Windows is not supported directly. On Windows, use WSL 2 with a Linux
 distribution such as Ubuntu 24.04.
 
-```bash
+Inside WSL 2:
+1.
+```
 sudo apt update
 sudo apt install build-essential
+```
+2. Install Homebrew using the Linux Homebrew instructions above
+
+3. Install FILER giggle:
+```
 brew install pkuksa/tap/filer-giggle
 ```
 WSL 1 is *not* recommended.
@@ -80,7 +93,7 @@ NOTE: On MacOS, if make fails may need to run
 make clean
 make -f Makefile.macos
 ```
-instead. Note that specific versions of autoconf (e.g., 2.69) may be required for successuful installation.
+instead. Note that specific versions of autoconf (e.g., 2.69) may be required for successful installation.
 
 Verify `FILER_giggle/bin/giggle` can be executed successfully.
 
